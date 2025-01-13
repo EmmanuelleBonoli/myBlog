@@ -1,18 +1,13 @@
-package org.wildcodeschool.myBlog.model;
-
-import jakarta.persistence.*;
+package org.wildcodeschool.myBlog.dto;
 
 import java.util.List;
 
-@Entity
-public class Category {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class CategoryDTO {
     private Long id;
-
-    @Column(nullable = false, length = 50)
     private String name;
+    private List<ArticleDTO> articles;
+
+    // Getters et setters
 
     public Long getId() {
         return id;
@@ -30,6 +25,11 @@ public class Category {
         this.name = name;
     }
 
-    @OneToMany(mappedBy = "category")
-    private List<Article> articles;
+    public List<ArticleDTO> getArticles() {
+        return articles;
+    }
+
+    public void setArticles(List<ArticleDTO> articles) {
+        this.articles = articles;
+    }
 }

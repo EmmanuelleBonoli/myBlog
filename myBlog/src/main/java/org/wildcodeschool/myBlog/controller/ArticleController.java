@@ -94,7 +94,7 @@ public class ArticleController {
 
     @GetMapping("/search-date")
     public ResponseEntity<List<Article>> getArticlesCreateAfter(@RequestParam LocalDateTime date) {
-        List<Article> articles = articleRepository.findByCreationDateAfter(date);
+        List<Article> articles = articleRepository.findByCreatedAtAfter(date);
         if (articles.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -103,7 +103,7 @@ public class ArticleController {
 
     @GetMapping("/last-five")
     public ResponseEntity<List<Article>> getFiveLastArticles() {
-        List<Article> articles = articleRepository.findTop5ByOrderByCreationDateDesc();
+        List<Article> articles = articleRepository.findTop5ByOrderByCreatedAtDesc();
         if (articles.isEmpty()) {
             return ResponseEntity.noContent().build();
         }

@@ -3,6 +3,7 @@ package org.wildcodeschool.myBlog.dto;
 import org.wildcodeschool.myBlog.model.Category;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class ArticleDTO {
     private Long id;
@@ -10,6 +11,16 @@ public class ArticleDTO {
     private String content;
     private LocalDateTime updatedAt;
     private String categoryName;
+
+    public List<String> getImageUrls() {
+        return imageUrls;
+    }
+
+    public void setImageUrls(List<String> imageUrls) {
+        this.imageUrls = imageUrls;
+    }
+
+    private List<String> imageUrls;
 
     // Getters et setters
 

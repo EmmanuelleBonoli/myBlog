@@ -1,11 +1,9 @@
 package org.wildcodeschool.myBlog.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.wildcodeschool.myBlog.dto.ArticleDTO;
-import org.wildcodeschool.myBlog.dto.AuthorDTO;
 import org.wildcodeschool.myBlog.model.*;
 import org.wildcodeschool.myBlog.repository.ArticleRepository;
 import org.wildcodeschool.myBlog.repository.AuthorRepository;
@@ -47,7 +45,7 @@ public class ArticleController {
         if (articles.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        List<ArticleDTO> articleDTOs = articles.stream().map(this::convertToDTO).collect(Collectors.toList());
+        List<ArticleDTO> articleDTOs = articles.stream().map(ArticleDTO::mapFromEntity).collect(Collectors.toList());
         return ResponseEntity.ok(articleDTOs);
     }
 
@@ -57,7 +55,7 @@ public class ArticleController {
         if (article == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(convertToDTO(article));
+        return ResponseEntity.ok(ArticleDTO.mapFromEntity(article));
     }
 
     @PostMapping
@@ -111,7 +109,7 @@ public class ArticleController {
             }
         }
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(convertToDTO(savedArticle));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ArticleDTO.mapFromEntity(savedArticle));
     }
 
     @PutMapping("/{id}")
@@ -190,7 +188,7 @@ public class ArticleController {
         }
 
         Article updatedArticle = articleRepository.save(article);
-        return ResponseEntity.ok(convertToDTO(updatedArticle));
+        return ResponseEntity.ok(ArticleDTO.mapFromEntity(updatedArticle));
     }
 
     @DeleteMapping("/{id}")
@@ -218,7 +216,7 @@ public class ArticleController {
         if (articles.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        List<ArticleDTO> articleDTOs = articles.stream().map(this::convertToDTO).collect(Collectors.toList());
+        List<ArticleDTO> articleDTOs = articles.stream().map(ArticleDTO::mapFromEntity).collect(Collectors.toList());
         return ResponseEntity.ok(articleDTOs);
     }
 
@@ -228,7 +226,7 @@ public class ArticleController {
         if (articles.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        List<ArticleDTO> articleDTOs = articles.stream().map(this::convertToDTO).collect(Collectors.toList());
+        List<ArticleDTO> articleDTOs = articles.stream().map(ArticleDTO::mapFromEntity).collect(Collectors.toList());
         return ResponseEntity.ok(articleDTOs);
     }
 
@@ -238,7 +236,7 @@ public class ArticleController {
         if (articles.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        List<ArticleDTO> articleDTOs = articles.stream().map(this::convertToDTO).collect(Collectors.toList());
+        List<ArticleDTO> articleDTOs = articles.stream().map(ArticleDTO::mapFromEntity).collect(Collectors.toList());
         return ResponseEntity.ok(articleDTOs);
     }
 
@@ -248,34 +246,8 @@ public class ArticleController {
         if (articles.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        List<ArticleDTO> articleDTOs = articles.stream().map(this::convertToDTO).collect(Collectors.toList());
+        List<ArticleDTO> articleDTOs = articles.stream().map(ArticleDTO::mapFromEntity).toList();
         return ResponseEntity.ok(articleDTOs);
     }
 
-    private ArticleDTO convertToDTO(Article article) {
-        ArticleDTO articleDTO = new ArticleDTO();
-        articleDTO.setId(article.getId());
-        articleDTO.setTitle(article.getTitle());
-        articleDTO.setContent(article.getContent());
-        articleDTO.setUpdatedAt(article.getUpdatedAt());
-        if (article.getCategory() != null) {
-            articleDTO.setCategoryName(article.getCategory().getName());
-        }
-        if (article.getImages() != null) {
-            articleDTO.setImageUrls(article.getImages().stream().map(Image::getUrl).collect(Collectors.toList()));
-        }
-        if (article.getArticleAuthors() != null) {
-            articleDTO.setAuthors(article.getArticleAuthors().stream()
-                    .filter(articleAuthor -> articleAuthor.getAuthor() != null)
-                    .map(articleAuthor -> {
-                        AuthorDTO authorDTO = new AuthorDTO();
-                        authorDTO.setId(articleAuthor.getAuthor().getId());
-                        authorDTO.setFirstname(articleAuthor.getAuthor().getFirstname());
-                        authorDTO.setLastname(articleAuthor.getAuthor().getLastname());
-                        return authorDTO;
-                    })
-                    .collect(Collectors.toList()));
-        }
-        return articleDTO;
-    }
 }

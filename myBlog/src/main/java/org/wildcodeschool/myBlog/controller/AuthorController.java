@@ -25,7 +25,7 @@ public class AuthorController {
         if (authors.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        List<AuthorDTO> authorDTOs = authors.stream().map(this::convertToDTO).collect(Collectors.toList());
+        List<AuthorDTO> authorDTOs = authors.stream().map(AuthorDTO::mapFromEntity).collect(Collectors.toList());
         return ResponseEntity.ok(authorDTOs);
     }
 
@@ -35,13 +35,13 @@ public class AuthorController {
         if (author == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(convertToDTO(author));
+        return ResponseEntity.ok(AuthorDTO.mapFromEntity(author));
     }
 
     @PostMapping
     public ResponseEntity<AuthorDTO> createAuthor(@RequestBody Author author) {
         Author savedAuthor = authorRepository.save(author);
-        return ResponseEntity.status(HttpStatus.CREATED).body(convertToDTO(savedAuthor));
+        return ResponseEntity.status(HttpStatus.CREATED).body(AuthorDTO.mapFromEntity(savedAuthor));
     }
 
     @PutMapping("/{id}")
@@ -56,7 +56,7 @@ public class AuthorController {
         authorData.setLastname(authorRequest.getLastname());
 
         Author updatedAuthor = authorRepository.save(authorData);
-        return ResponseEntity.ok(convertToDTO(updatedAuthor));
+        return ResponseEntity.ok(AuthorDTO.mapFromEntity(updatedAuthor));
     }
 
     @DeleteMapping("/{id}")
@@ -67,14 +67,5 @@ public class AuthorController {
         }
         authorRepository.delete(author);
         return ResponseEntity.noContent().build();
-    }
-
-    private AuthorDTO convertToDTO(Author author) {
-        AuthorDTO authorDTO = new AuthorDTO();
-        authorDTO.setId(author.getId());
-        authorDTO.setFirstname(author.getFirstname());
-        authorDTO.setLastname(author.getLastname());
-
-        return authorDTO;
     }
 }

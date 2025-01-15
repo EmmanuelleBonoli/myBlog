@@ -1,13 +1,14 @@
 package org.wildcodeschool.myBlog.dto;
 
-public class ArticleAuthorDTO {
-    private String contribution;
+import org.wildcodeschool.myBlog.model.ArticleAuthor;
 
-    public String getContribution() {
-        return contribution;
-    }
+public record ArticleAuthorDTO(
+        String contribution
+) {
 
-    public void setContribution(String contribution) {
-        this.contribution = contribution;
+    public static ArticleAuthorDTO mapFromEntity(ArticleAuthor articleAuthor) {
+        return new ArticleAuthorDTO(
+                articleAuthor.getContribution()
+        );
     }
 }

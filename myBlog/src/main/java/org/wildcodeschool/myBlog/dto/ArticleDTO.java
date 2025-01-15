@@ -1,73 +1,33 @@
 package org.wildcodeschool.myBlog.dto;
 
+import org.wildcodeschool.myBlog.model.Article;
+import org.wildcodeschool.myBlog.model.ArticleAuthor;
+import org.wildcodeschool.myBlog.model.Image;
+
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Function;
 
-public class ArticleDTO {
-    private Long id;
-    private String title;
-    private String content;
-    private LocalDateTime updatedAt;
-    private String categoryName;
-    private List<String> imageUrls;
-    private List<AuthorDTO> Authors;
+public record ArticleDTO(
+        Long id,
+        String title,
+        String content,
+        LocalDateTime updatedAt,
+        String categoryName,
+        List<String> imageUrls,
+        List<AuthorDTO> Authors
+) {
 
-    // Getters et setters
-
-    public List<AuthorDTO> getAuthors() {
-        return Authors;
+    public static ArticleDTO mapFromEntity(Article article) {
+        return new ArticleDTO(
+                article.getId(),
+                article.getTitle(),
+                article.getContent(),
+                article.getUpdatedAt(),
+                article.getCategory() != null ? article.getCategory().getName() : null,
+                article.getImages() != null ? article.getImages().stream().map(Image::getUrl).toList() : null,
+                article.getArticleAuthors() != null ? article.getArticleAuthors().stream().map((i) -> AuthorDTO.mapFromEntity(i.getAuthor())).toList() : null
+        );
     }
 
-    public void setAuthors(List<AuthorDTO> authors) {
-        Authors = authors;
-    }
-
-    public List<String> getImageUrls() {
-        return imageUrls;
-    }
-
-    public void setImageUrls(List<String> imageUrls) {
-        this.imageUrls = imageUrls;
-    }
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public String getCategoryName() {
-        return categoryName;
-    }
-
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
-    }
 }

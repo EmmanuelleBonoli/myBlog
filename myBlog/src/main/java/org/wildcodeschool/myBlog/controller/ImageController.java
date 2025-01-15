@@ -4,9 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.wildcodeschool.myBlog.dto.ImageDTO;
 import org.wildcodeschool.myBlog.model.Image;
-import org.wildcodeschool.myBlog.model.Article;
 import org.wildcodeschool.myBlog.repository.ImageRepository;
-import org.wildcodeschool.myBlog.repository.ArticleRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,11 +13,9 @@ import java.util.stream.Collectors;
 @RequestMapping("/images")
 public class ImageController {
     private final ImageRepository imageRepository;
-    private final ArticleRepository articleRepository;
 
-    public ImageController(ImageRepository imageRepository, ArticleRepository articleRepository) {
+    public ImageController(ImageRepository imageRepository) {
         this.imageRepository = imageRepository;
-        this.articleRepository = articleRepository;
     }
 
     @GetMapping
@@ -29,7 +25,7 @@ public class ImageController {
             return ResponseEntity.noContent().build();
         }
         List<ImageDTO> imageDTOs = images.stream()
-                .map(this::convertToDTO)
+                .map(ImageDTO::mapFromEntity)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(imageDTOs);
     }
@@ -40,13 +36,13 @@ public class ImageController {
         if (image == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(convertToDTO(image));
+        return ResponseEntity.ok(ImageDTO.mapFromEntity(image));
     }
 
     @PostMapping
     public ResponseEntity<ImageDTO> createImage(@RequestBody Image image) {
         Image savedImage = imageRepository.save(image);
-        return ResponseEntity.status(201).body(convertToDTO(savedImage));
+        return ResponseEntity.status(201).body(ImageDTO.mapFromEntity(savedImage));
     }
 
     @PutMapping("/{id}")
@@ -57,7 +53,7 @@ public class ImageController {
         }
         image.setUrl(imageDetails.getUrl());
         Image updatedImage = imageRepository.save(image);
-        return ResponseEntity.ok(convertToDTO(updatedImage));
+        return ResponseEntity.ok(ImageDTO.mapFromEntity(updatedImage));
     }
 
     @DeleteMapping("/{id}")
@@ -70,13 +66,4 @@ public class ImageController {
         return ResponseEntity.noContent().build();
     }
 
-    private ImageDTO convertToDTO(Image image) {
-        ImageDTO imageDTO = new ImageDTO();
-        imageDTO.setId(image.getId());
-        imageDTO.setUrl(image.getUrl());
-        if (image.getArticles() != null) {
-            imageDTO.setArticleIds(image.getArticles().stream().map(Article::getId).collect(Collectors.toList()));
-        }
-        return imageDTO;
-    }
 }

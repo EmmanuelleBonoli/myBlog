@@ -5,17 +5,17 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.wildcodeschool.myBlog.dto.ArticleDTO;
+import org.wildcodeschool.myBlog.dto.AuthorDTO;
 import org.wildcodeschool.myBlog.dto.CategoryDTO;
 import org.wildcodeschool.myBlog.model.Category;
-import org.wildcodeschool.myBlog.model.Article;
+import org.wildcodeschool.myBlog.model.Image;
 import org.wildcodeschool.myBlog.repository.CategoryRepository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/category")
+@RequestMapping("/categories")
 public class CategoryController {
     private final CategoryRepository categoryRepository;
 
@@ -78,14 +78,25 @@ public class CategoryController {
         CategoryDTO categoryDTO = new CategoryDTO();
         categoryDTO.setId(category.getId());
         categoryDTO.setName(category.getName());
-        if(categoryDTO.getArticles() != null) {
-            categoryDTO.setArticles(categoryDTO.getArticles().stream().map(article -> {
+        if (category.getArticles() != null) {
+            categoryDTO.setArticles(category.getArticles().stream().map(article -> {
                 ArticleDTO articleDTO = new ArticleDTO();
                 articleDTO.setId(article.getId());
                 articleDTO.setTitle(article.getTitle());
                 articleDTO.setContent(article.getContent());
                 articleDTO.setUpdatedAt(article.getUpdatedAt());
-                articleDTO.setCategoryName(article.getCategoryName());
+                articleDTO.setCategoryName(article.getCategory().getName());
+                articleDTO.setImageUrls(article.getImages().stream().map(Image::getUrl).collect(Collectors.toList()));
+                articleDTO.setAuthors(article.getArticleAuthors().stream()
+                        .filter(articleAuthor -> articleAuthor.getAuthor() != null)
+                        .map(articleAuthor -> {
+                            AuthorDTO authorDTO = new AuthorDTO();
+                            authorDTO.setId(articleAuthor.getAuthor().getId());
+                            authorDTO.setFirstname(articleAuthor.getAuthor().getFirstname());
+                            authorDTO.setLastname(articleAuthor.getAuthor().getLastname());
+                            return authorDTO;
+                        })
+                        .collect(Collectors.toList()));
                 return articleDTO;
             }).collect(Collectors.toList()));
         }

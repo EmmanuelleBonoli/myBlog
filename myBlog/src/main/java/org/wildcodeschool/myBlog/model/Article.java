@@ -25,16 +25,8 @@ public class Article {
     private LocalDateTime updatedAt;
 
     @ManyToOne
-    @JoinColumn(name= "category_id")
+    @JoinColumn(name = "category_id")
     private Category category;
-
-    public List<Image> getImages() {
-        return images;
-    }
-
-    public void setImages(List<Image> images) {
-        this.images = images;
-    }
 
     @ManyToMany
     @JoinTable(
@@ -44,7 +36,26 @@ public class Article {
     )
     private List<Image> images;
 
+    @OneToMany(mappedBy = "article")
+    private List<ArticleAuthor> articleAuthors;
+
     // Getters et setters
+
+    public List<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(List<Image> images) {
+        this.images = images;
+    }
+
+    public List<ArticleAuthor> getArticleAuthors() {
+        return articleAuthors;
+    }
+
+    public void setArticleAuthors(List<ArticleAuthor> articleAuthors) {
+        this.articleAuthors = articleAuthors;
+    }
 
     public Long getId() {
         return id;
@@ -54,11 +65,11 @@ public class Article {
         this.id = id;
     }
 
-    public Category getCategory(){
+    public Category getCategory() {
         return category;
     }
 
-    public void setCategory(Category nameCategory){
+    public void setCategory(Category nameCategory) {
         this.category = nameCategory;
     }
 
@@ -93,4 +104,6 @@ public class Article {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+
 }

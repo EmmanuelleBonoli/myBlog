@@ -14,6 +14,10 @@ public class Image {
     @Column(nullable = false)
     private String url;
 
+    @ManyToMany(mappedBy = "images")
+    private List<Article> articles;
+
+
     public List<Article> getArticles() {
         return articles;
     }
@@ -21,9 +25,6 @@ public class Image {
     public void setArticles(List<Article> articles) {
         this.articles = articles;
     }
-
-    @ManyToMany(mappedBy = "images")
-    private List<Article> articles;
 
     public Long getId() {
         return id;

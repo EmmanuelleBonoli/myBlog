@@ -1,69 +1,63 @@
 package org.wildcodeschool.myBlog.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.wildcodeschool.myBlog.dto.ImageDTO;
 import org.wildcodeschool.myBlog.model.Image;
-import org.wildcodeschool.myBlog.repository.ImageRepository;
+import org.wildcodeschool.myBlog.service.ImageService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/images")
 public class ImageController {
-    private final ImageRepository imageRepository;
+    private final ImageService imageService;
 
-    public ImageController(ImageRepository imageRepository) {
-        this.imageRepository = imageRepository;
+    public ImageController(ImageService imageService) {
+        this.imageService = imageService;
     }
 
     @GetMapping
     public ResponseEntity<List<ImageDTO>> getAllImages() {
-        List<Image> images = imageRepository.findAll();
+        List<ImageDTO> images = imageService.getAllImages();
         if (images.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        List<ImageDTO> imageDTOs = images.stream()
-                .map(ImageDTO::mapFromEntity)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(imageDTOs);
+        return ResponseEntity.ok(images);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ImageDTO> getImageById(@PathVariable Long id) {
-        Image image = imageRepository.findById(id).orElse(null);
+        ImageDTO image = imageService.getImageById(id);
         if (image == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(ImageDTO.mapFromEntity(image));
+        return ResponseEntity.ok(image);
     }
 
     @PostMapping
     public ResponseEntity<ImageDTO> createImage(@RequestBody Image image) {
-        Image savedImage = imageRepository.save(image);
-        return ResponseEntity.status(201).body(ImageDTO.mapFromEntity(savedImage));
+        ImageDTO savedImage = imageService.createImage(image);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedImage);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ImageDTO> updateImage(@PathVariable Long id, @RequestBody Image imageDetails) {
-        Image image = imageRepository.findById(id).orElse(null);
-        if (image == null) {
+        ImageDTO updatedImage = imageService.updateImage(id, imageDetails);
+        if (updatedImage == null) {
             return ResponseEntity.notFound().build();
         }
-        image.setUrl(imageDetails.getUrl());
-        Image updatedImage = imageRepository.save(image);
-        return ResponseEntity.ok(ImageDTO.mapFromEntity(updatedImage));
+        return ResponseEntity.ok(updatedImage);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteImage(@PathVariable Long id) {
-        Image image = imageRepository.findById(id).orElse(null);
-        if (image == null) {
+        if (imageService.deleteImage(id)) {
             return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.noContent().build();
         }
-        imageRepository.delete(image);
-        return ResponseEntity.noContent().build();
     }
 
 }

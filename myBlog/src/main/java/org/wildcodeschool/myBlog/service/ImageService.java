@@ -2,6 +2,7 @@ package org.wildcodeschool.myBlog.service;
 
 import org.springframework.stereotype.Service;
 import org.wildcodeschool.myBlog.dto.ImageDTO;
+import org.wildcodeschool.myBlog.exception.ResourceNotFoundException;
 import org.wildcodeschool.myBlog.model.Image;
 import org.wildcodeschool.myBlog.repository.ImageRepository;
 
@@ -23,10 +24,7 @@ public class ImageService {
     }
 
     public ImageDTO getImageById(Long id) {
-        Image image = imageRepository.findById(id).orElse(null);
-        if (image == null) {
-            return null;
-        }
+        Image image = imageRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("L'image avec l'id " + id + " n'a pas été trouvé"));
         return ImageDTO.mapFromEntity(image);
     }
 
@@ -36,10 +34,7 @@ public class ImageService {
     }
 
     public ImageDTO updateImage(Long id, Image imageRequest) {
-        Image image = imageRepository.findById(id).orElse(null);
-        if (image == null) {
-            return null;
-        }
+        Image image = imageRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("L'image avec l'id " + id + " n'a pas été trouvé"));
         image.setUrl(imageRequest.getUrl());
 
         Image updatedImage = imageRepository.save(image);
@@ -47,10 +42,7 @@ public class ImageService {
     }
 
     public boolean deleteImage(Long id) {
-        Image image = imageRepository.findById(id).orElse(null);
-        if (image == null) {
-            return false;
-        }
+        Image image = imageRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("L'image avec l'id " + id + " n'a pas été trouvé"));
 
         imageRepository.delete(image);
         return true;
